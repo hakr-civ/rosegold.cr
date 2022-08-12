@@ -71,6 +71,9 @@ class Rosegold::State::Play
     # 0x41 => Clientbound::ActionBar,
     # 0x59 => Clientbound::TimeUpdate,
     # 0x5f => Clientbound::PlayerListHeaderAndFooter,
+    0x53 => Clientbound::ScoreboardObjective,
+    0x55 => Clientbound::Teams,
+    0x56 => Clientbound::UpdateScore,
   }
 
   def self.[](packet_id)

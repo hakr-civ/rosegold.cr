@@ -7,17 +7,23 @@ def show_help
   puts "\\position - Displays the current coordinates of the player"
 end
 
-Rosegold::Client.new("play.civmc.net", 25565).start do |bot|
+Rosegold::Client.new("test.civmc.net", 25566).start do |bot|
   show_help
 
   spawn do
-    bot.on Rosegold::Clientbound::Chat do |chat|
-      if chat.message.to_s.starts_with? "[Estalia]"
-        if chat.message.to_s.downcase.includes? "!killgrep"
-          bot.chat "/g Estalia Oh fuck, Logging out ASAP!!!"
-          bot.chat "/logout"
-        end
-      end
+    bot.on Rosegold::Clientbound::Teams do |packet|
+      Log.info { "Teams: #{packet}" }
+    end
+
+    bot.on Rosegold::Clientbound::ScoreboardObjective do |packet|
+      Log.info { "ScoreboardObjective[name]: #{packet.objective_name}" }
+      Log.info { "ScoreboardObjective[value]: #{packet.objective_value}" }
+    end
+
+    update_score_count = 0
+    bot.on Rosegold::Clientbound::UpdateScore do |packet|
+      Log.info { "UpdateScore[name]: #{packet.entity_name}" }
+      Log.info { "UpdateScore[called_count]: #{update_score_count += 1}" }
     end
   end
 
