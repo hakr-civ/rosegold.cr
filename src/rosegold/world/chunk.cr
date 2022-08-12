@@ -9,7 +9,7 @@ class Rosegold::World::Chunk
     @min_y = -64
     @max_y = 256 + 64
     @world_height = @max_y - @min_y
-    section_count = world_height >> 4
+    section_count = 18 # world_height >> 4
     @sections = Array(Section).new(section_count) { Section.new io }
   end
 

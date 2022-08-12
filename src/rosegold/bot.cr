@@ -27,6 +27,10 @@ class Rosegold::Bot
     player.look.yaw = angle
   end
 
+  def attack
+    client.queue_packet Rosegold::Serverbound::UseEntity.new player.id, player.id
+  end
+
   # Used to retrieve the yaw the player is looking
   delegate yaw, to: player.look
 

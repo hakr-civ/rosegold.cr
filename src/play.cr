@@ -7,13 +7,17 @@ def show_help
   puts "\\position - Displays the current coordinates of the player"
 end
 
-Rosegold::Client.new("localhost", 25565).start do |bot|
+Rosegold::Client.new("play.civmc.net", 25565).start do |bot|
   show_help
 
   spawn do
-    loop do
-      bot.move_to rand(-10..10), -60, rand(-10..10)
-      sleep 3
+    bot.on Rosegold::Clientbound::Chat do |chat|
+      if chat.message.to_s.starts_with? "[Estalia]"
+        if chat.message.to_s.downcase.includes? "!killgrep"
+          bot.chat "/g Estalia Oh fuck, Logging out ASAP!!!"
+          bot.chat "/logout"
+        end
+      end
     end
   end
 

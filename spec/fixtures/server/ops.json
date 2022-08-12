@@ -1,7 +1,25 @@
 [
   {
+    "uuid": "228ba5dc-a03c-3df0-8c5c-3385230406f0",
+    "name": "rosegold",
+    "level": 4,
+    "bypassesPlayerLimit": false
+  },
+  {
+    "uuid": "0b40e79c-9d25-3e6d-b067-1c9d9b164981",
+    "name": "rosegold_test2",
+    "level": 4,
+    "bypassesPlayerLimit": false
+  },
+  {
     "uuid": "6a761449-c2c9-3581-8046-89b9c3efb12a",
     "name": "rosegold_test",
+    "level": 4,
+    "bypassesPlayerLimit": false
+  },
+  {
+    "uuid": "810bc3ed-7c1a-3dcd-9adc-383cfd922e7f",
+    "name": "grepsedawk",
     "level": 4,
     "bypassesPlayerLimit": false
   }
