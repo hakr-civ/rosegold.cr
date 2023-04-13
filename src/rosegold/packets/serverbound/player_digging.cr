@@ -19,6 +19,7 @@ class Rosegold::Serverbound::PlayerDigging < Rosegold::Serverbound::Packet
   ); end
 
   def write : Bytes
+    Log.debug { "PlayerDigging: [#{@status}] #{@location} #{@face}" }
     Minecraft::IO::Memory.new.tap do |buffer|
       buffer.write @@packet_id
       buffer.write status.value

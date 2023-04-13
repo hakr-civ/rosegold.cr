@@ -61,6 +61,7 @@ class Rosegold::Interactions
             sleep 1.tick
             reached = reach_block_or_entity
             if reached.try &.block != @digging_block.try &.block
+              puts "cancel digging because block changed from #{reached.try &.block} to #{@digging_block.try &.block}"
               cancel_digging
               cancel = true
               break
