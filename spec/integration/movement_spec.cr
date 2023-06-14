@@ -72,16 +72,19 @@ Spectator.describe Rosegold::Bot do
     end
   end
 
-  it "should select a different hotbar slot" do
-    client.join_game do |client|
-      Rosegold::Bot.new(client).try do |bot|
-        bot.chat "/tp 1 -60 1"
+  describe "#move_to" do
+    it "stops moving when provided block returns false" do
+      client.join_game do |client|
+        Rosegold::Bot.new(client).try do |bot|
+          sleep 2 # load chunks
+          bot.chat "/tp 1 -60 1"
+          sleep 1 # teleport
 
-        bot.hotbar_selection = 4
-        expect(bot.hotbar_selection).to eq 4
-
-        bot.hotbar_selection = 7
-        expect(bot.hotbar_selection).to eq 7
+          bot.move_to 2, 2 do
+            false
+          end
+          expect(bot.feet).not_to eq(Rosegold::Vec3d.new(2, -60, 2))
+        end
       end
     end
   end

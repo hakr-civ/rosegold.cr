@@ -1,23 +1,21 @@
 class Rosegold::Action(T)
-  SUCCESS = "" # TODO use unique symbol
-
   # TODO try channel size 1 so #succeed/#fail aren't rendezvous
-  getter channel : Channel(String) = Channel(String).new
+  getter channel : Channel(Bool) = Channel(Bool).new
   getter target : T
+  getter check : Proc(Bool)
 
-  def initialize(@target : T); end
+  def initialize(@target : T, @check : Proc(Bool) = Proc(Bool).new { true }); end
 
   def succeed
-    @channel.send(SUCCESS)
+    @channel.send true
   end
 
   def fail(msg : String)
-    @channel.send(msg)
+    Log.warn { msg }
+    @channel.send false
   end
 
-  # Throw error if it failed
   def join
-    result = channel.receive
-    raise Exception.new(result) if result != Action::SUCCESS
+    channel.receive
   end
 end

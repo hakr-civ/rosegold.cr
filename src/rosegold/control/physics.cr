@@ -70,10 +70,14 @@ class Rosegold::Physics
     end
   end
 
+  def move(target : Vec3d?)
+    move(target) { true }
+  end
+
   # Set the movement target location and wait until it is achieved.
   # If there is already a movement target, it is cancelled, and replaced with this new target.
   # Set `target=nil` to stop moving and cancel any current movement.
-  def move(target : Vec3d?)
+  def move(target : Vec3d?, &block : Proc(Bool))
     if target == nil
       action_mutex.synchronize do
         @movement_action.try &.fail "Movement stopped"
@@ -82,7 +86,7 @@ class Rosegold::Physics
       return
     end
 
-    action = Action(Vec3d).new(target)
+    action = Action(Vec3d).new(target, block)
     action_mutex.synchronize do
       @movement_action.try &.fail "Replaced by movement to #{target}"
       @movement_action = action
@@ -150,12 +154,13 @@ class Rosegold::Physics
     movement, next_velocity = Physics.predict_movement_collision(
       player.feet, input_velocity, Player::DEFAULT_AABB, dimension)
 
-    look_action = action_mutex.synchronize do
-      action = @look_action
-      @look_action = nil
-      action
-    end
-    look = look_action.try(&.target) || player.look
+    look = if look_action = action_mutex.synchronize do
+                action = @look_action
+                @look_action = nil
+                action
+              end
+             look_action.target
+           end || player.look
 
     feet = player.feet + movement
     # align with grid in case of rounding errors
@@ -164,15 +169,15 @@ class Rosegold::Physics
     # TODO: this only works with gravity on
     on_ground = movement.y > input_velocity.y
 
-    @movement_action.try &.fail "Stuck at #{feet}" unless feet != player.feet
-
     send_movement_packet feet, look, on_ground
     player.velocity = next_velocity
 
     action_mutex.synchronize do
       look_action.try &.succeed
 
-      @movement_action.try do |movement_action|
+      if movement_action = @movement_action
+        movement_action.fail "Provided movement check failed" unless movement_action.check.call
+
         # movement_action.target only influences x,z; rely on stepping/falling to change y
         target_diff = (movement_action.target - player.feet).with_y(0)
         if target_diff.length < VERY_CLOSE

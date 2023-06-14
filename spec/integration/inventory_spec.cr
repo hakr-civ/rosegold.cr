@@ -1,6 +1,22 @@
 require "../spec_helper"
 
 Spectator.describe Rosegold::Bot do
+  describe "#hotbar_selection" do
+    it "should select a different hotbar slot" do
+      client.join_game do |client|
+        Rosegold::Bot.new(client).try do |bot|
+          bot.chat "/tp 1 -60 1"
+
+          bot.hotbar_selection = 4
+          expect(bot.hotbar_selection).to eq 4
+
+          bot.hotbar_selection = 7
+          expect(bot.hotbar_selection).to eq 7
+        end
+      end
+    end
+  end
+
   describe "#pick" do
     context "when the item is not in the inventory" do
       it "returns false" do
